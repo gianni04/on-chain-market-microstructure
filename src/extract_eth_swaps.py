@@ -1,8 +1,8 @@
-"""extract_eth_swaps.py — Extraction des events Swap du pool ETH/USDC Uniswap V3
+"""extract_eth_swaps.py : Extraction des events Swap du pool ETH/USDC Uniswap V3
 (Ethereum mainnet) et estimation de la microstructure.
 
 Pool : 0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640 (ETH/USDC 0.05%)
-token0 = USDC (6 déc.), token1 = WETH (18 déc.) — vérifié on-chain.
+token0 = USDC (6 déc.), token1 = WETH (18 déc.), vérifié on-chain.
 Convention : flux signé positif = achat d'ETH par le taker = hausse de prix.
 
 Côté ETH, données réelles observées, donc on estime (volatilité, lambda, spread).
@@ -85,7 +85,7 @@ def connect_rpc(urls=None):
 
 def verify_pool(w3):
     """Vérifie token0, token1 et leurs décimales on-chain."""
-    print("\n--- Verification du pool ---")
+    print("\nVerification du pool")
     abi = [
         {"inputs": [], "name": "token0", "outputs": [{"type": "address"}], "stateMutability": "view", "type": "function"},
         {"inputs": [], "name": "token1", "outputs": [{"type": "address"}], "stateMutability": "view", "type": "function"},
@@ -207,7 +207,7 @@ def compute_eth_price(sqrt_price_x96, dec0, dec1):
 
 def check_coherence(df, pool_info, w3):
     """Vérifie que le prix ETH/USD reconstruit est cohérent avec CoinGecko."""
-    print("\n--- Controle coherence ---")
+    print("\nControle coherence")
 
     dec0 = pool_info["decimals0"]
     dec1 = pool_info["decimals1"]
@@ -232,7 +232,7 @@ def check_coherence(df, pool_info, w3):
             print(f"  CoinGecko ETH/USD              : ${cg_price:,.2f}")
             print(f"  Ecart                          : {ecart_pct:.2f}%")
             if ecart_pct > 2:
-                print(f"  Ecart > 2% — vérifier décimales ou pool.")
+                print(f"  Ecart > 2%, vérifier décimales ou pool.")
         else:
             cg_price = None
             print(f"  CoinGecko: HTTP {resp.status_code}")
@@ -245,7 +245,7 @@ def check_coherence(df, pool_info, w3):
 
 def plot_price_impact(df, pool_info, lambda_binned):
     """Génère le nuage de points flux net (ETH) vs ΔP avec droite de régression."""
-    print("\n--- Generation figure ---")
+    print("\nGeneration figure")
 
     dec0 = pool_info["decimals0"]
     dec1 = pool_info["decimals1"]
@@ -288,9 +288,9 @@ def plot_price_impact(df, pool_info, lambda_binned):
 
     ax.axhline(0, color="grey", linewidth=0.5)
     ax.axvline(0, color="grey", linewidth=0.5)
-    ax.set_xlabel("Flux net signe (ETH) — positif = achat taker")
-    ax.set_ylabel("Variation de prix (USD) — intra-bin 5min")
-    ax.set_title(f"Impact prix — ETH/USDC (Uniswap V3, {bin_sec}s bins)")
+    ax.set_xlabel("Flux net signe (ETH), positif = achat taker")
+    ax.set_ylabel("Variation de prix (USD), intra-bin 5min")
+    ax.set_title(f"Impact prix : ETH/USDC (Uniswap V3, {bin_sec}s bins)")
     ax.legend()
     ax.grid(True, alpha=0.3)
     cbar = plt.colorbar(sc, ax=ax, label="log(1 + nb swaps/bin)")
@@ -302,7 +302,7 @@ def plot_price_impact(df, pool_info, lambda_binned):
 
 def main():
     print("=" * 72)
-    print("UNISWAP V3 — Extraction swaps ETH/USDC (Ethereum mainnet)")
+    print("UNISWAP V3 : Extraction swaps ETH/USDC (Ethereum mainnet)")
     print("=" * 72)
 
     w3 = connect_rpc()
@@ -316,7 +316,7 @@ def main():
 
     blocks_back = LOOKBACK_HOURS * BLOCKS_PER_HOUR
     from_block = latest - blocks_back
-    print(f"\n--- Extraction swaps ---")
+    print("\nExtraction swaps")
     print(f"  Fenetre : {LOOKBACK_HOURS}h ({blocks_back} blocs)")
     print(f"  De bloc {from_block} a {latest}")
 
@@ -344,7 +344,7 @@ def main():
     dec0 = pool_info["decimals0"]
     dec1 = pool_info["decimals1"]
 
-    print("\n--- Estimateurs microstructure ---")
+    print("\nEstimateurs microstructure")
 
     tstamp = np.asarray(df["timestamp"], dtype=np.float64)
     dt = np.diff(tstamp)
@@ -495,7 +495,7 @@ def main():
     lam_usd_300 = kb300.get("lambda_usd_per_eth2", np.nan)
 
     print("\n" + "=" * 72)
-    print("RECAPITULATIF — ETH/USDC (Uniswap V3, Ethereum mainnet)")
+    print("RECAPITULATIF : ETH/USDC (Uniswap V3, Ethereum mainnet)")
     print("=" * 72)
     print(f"""
 | Mesure                              | ETH/USDC (reel, estime)                    |

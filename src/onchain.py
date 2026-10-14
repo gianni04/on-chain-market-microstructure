@@ -1,4 +1,4 @@
-"""onchain.py — Uniswap V4 pool-state extraction for the HLD/ETH pool on Base.
+"""onchain.py : Uniswap V4 pool-state extraction for the HLD/ETH pool on Base.
 
 Run offline (uses the values recorded in data/pool_state.json):
     python src/onchain.py

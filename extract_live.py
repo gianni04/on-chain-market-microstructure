@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""extract_live.py — Lecture directe de l'état du pool Uniswap V4 HLD/ETH sur Base.
+"""extract_live.py : Lecture directe de l'état du pool Uniswap V4 HLD/ETH sur Base.
 
 Lit le storage du PoolManager via extsload(bytes32) et décode sqrtPriceX96,
 tick, lpFee, protocolFee (Slot0) et la liquidité active L.
@@ -48,11 +48,11 @@ def connect_rpc():
         try:
             w3 = Web3(Web3.HTTPProvider(url, request_kwargs={"timeout": 15}))
             if w3.is_connected():
-                print(f"✓ RPC connecté : {url}")
+                print(f"RPC connecté : {url}")
                 return w3
         except Exception as e:
-            print(f"✗ {url} → {e}")
-    print("✗ Aucun RPC Base disponible.")
+            print(f"Erreur {url} : {e}")
+    print("Aucun RPC Base disponible.")
     sys.exit(1)
 
 
@@ -78,13 +78,13 @@ def compute_state_slot(pool_id: bytes) -> bytes:
 
 
 def extsload(w3: Web3, slot: bytes) -> bytes:
-    """Appelle extsload(bytes32) → bytes32."""
+    """Appelle extsload(bytes32) et renvoie bytes32."""
     payload = bytes.fromhex(EXTSLOAD_SELECTOR[2:]) + slot
     return w3.eth.call({"to": POOL_MANAGER, "data": "0x" + payload.hex()})
 
 
 def unpack_slot0(raw: bytes):
-    """Décode le Slot0 selon le layout Uniswap V4 (MSB→LSB)."""
+    """Décode le Slot0 selon le layout Uniswap V4 (du MSB au LSB)."""
     assert len(raw) == 32, f"Slot0 doit faire 32 bytes, reçu {len(raw)}"
 
     lp_fee    = int.from_bytes(raw[3:6], "big")
@@ -114,25 +114,25 @@ def compute_spot_price(sqrt_price_x96: int) -> tuple[float, float]:
 def extract(w3: Web3) -> dict:
     """Extraction complète de l'état du pool."""
 
-    print("1. Vérification du sélecteur extsload(bytes32)…")
+    print("Vérification du sélecteur extsload(bytes32)...")
     code = w3.eth.get_code(POOL_MANAGER).hex()
     if EXTSLOAD_SELECTOR[2:] not in code:
-        print(f"✗ Sélecteur {EXTSLOAD_SELECTOR} NON TROUVÉ dans le bytecode!")
+        print(f"Sélecteur {EXTSLOAD_SELECTOR} non trouvé dans le bytecode.")
         sys.exit(1)
-    print(f"  ✓ Sélecteur {EXTSLOAD_SELECTOR} confirmé.")
+    print(f"  Sélecteur {EXTSLOAD_SELECTOR} confirmé.")
 
-    print("\n2. Calcul du PoolId…")
+    print("\nCalcul du PoolId...")
     pool_id = compute_pool_id()
     pool_id_hex = "0x" + pool_id.hex()
     print(f"  PoolKey encodé : {encode_hex(abi_encode(['address','address','uint24','int24','address'], [to_checksum_address(CURRENCY_0), to_checksum_address(CURRENCY_1), FEE, TICK_SPACING, to_checksum_address(HOOKS)]))}")
     print(f"  PoolId calculé  : {pool_id_hex}")
     if pool_id_hex != EXPECTED_POOL_ID:
-        print(f"✗ PoolId attendu  : {EXPECTED_POOL_ID}")
-        print("  → ERREUR: constantes du pool incorrectes.")
+        print(f"PoolId attendu  : {EXPECTED_POOL_ID}")
+        print("  ERREUR : constantes du pool incorrectes.")
         sys.exit(1)
-    print(f"  ✓ PoolId vérifié.")
+    print("  PoolId vérifié.")
 
-    print("\n3. Lecture du Pool.State via extsload…")
+    print("\nLecture du Pool.State via extsload...")
     state_slot = compute_state_slot(pool_id)
     print(f"  stateSlot       : {encode_hex(state_slot)}")
 
@@ -156,7 +156,7 @@ def extract(w3: Web3) -> dict:
     liquidity = int.from_bytes(raw_liquidity[16:32], "big")
     print(f"  L (uint128)      : {liquidity}")
 
-    print("\n4. Prix spot…")
+    print("\nPrix spot...")
     hld_per_eth, eth_per_hld = compute_spot_price(sqrt_price_x96)
     print(f"  1 ETH = {hld_per_eth:,.4f} HLD")
     print(f"  1 HLD = {eth_per_hld:.10f} ETH")
@@ -166,18 +166,18 @@ def extract(w3: Web3) -> dict:
     consistent = abs(ratio - 1.0) < 0.01
     print(f"  Prix tick (1.0001^{tick}) = {price_from_tick:,.4f}")
     print(f"  Ratio tick/sqrtPX96 = {ratio:.6f}")
-    print(f"  ✓ Cohérence : {'OK' if consistent else 'ÉCART >1% — layout à vérifier'}")
+    print(f"  Cohérence : {'OK' if consistent else 'ÉCART >1%, layout à vérifier'}")
 
     block = w3.eth.get_block("latest")
     block_number = block["number"]
     block_timestamp = block["timestamp"]
     block_datetime = datetime.fromtimestamp(block_timestamp, tz=timezone.utc)
-    print(f"\n5. Bloc #{block_number} du {block_datetime.isoformat()}")
+    print(f"\nBloc #{block_number} du {block_datetime.isoformat()}")
 
     sqrt_p = sqrt_price_x96 / Q96
     x_virt = liquidity / sqrt_p
     y_virt = liquidity * sqrt_p
-    print(f"\n6. Réserves virtuelles (modèle constant-product):")
+    print("\nRéserves virtuelles (modèle constant-product) :")
     print(f"  x_virt (ETH)  = {x_virt:,.6f}")
     print(f"  y_virt (HLD)  = {y_virt:,.0f}")
 
@@ -215,12 +215,12 @@ def save_state(state: dict):
     """Écrit le fichier JSON."""
     with open(POOL_STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2, ensure_ascii=False)
-    print(f"\n✓ État sauvegardé → {POOL_STATE_FILE}")
+    print(f"\nÉtat sauvegardé dans {POOL_STATE_FILE}")
 
 
 def main():
     print("=" * 72)
-    print("UNISWAP V4 — Extraction live pool HLD/ETH (Base)")
+    print("UNISWAP V4 : Extraction live pool HLD/ETH (Base)")
     print("=" * 72 + "\n")
 
     w3 = connect_rpc()
@@ -243,13 +243,13 @@ def main():
     print(f"  Liquidité L        : {state['liquidity']}")
     print(f"  1 ETH              = {sp['hld_per_eth']:,.4f} HLD")
     print(f"  1 HLD              = {sp['eth_per_hld']:.10f} ETH")
-    print(f"  Cohérence tick/px  : {'✓' if state['consistency_check']['consistent'] else '✗'}")
+    print(f"  Cohérence tick/px  : {'OK' if state['consistency_check']['consistent'] else 'ÉCART'}")
     print(f"\n  Vérifier sur BaseScan:")
-    print(f"  → PoolManager : https://basescan.org/address/{POOL_MANAGER}#readContract")
-    print(f"  → Token HLD   : https://basescan.org/token/{TOKEN_HLD}")
-    print(f"  → extsload avec stateSlot = {state['state_slot_hex']}")
-    print(f"  → Le tick ({state['tick']}) doit correspondre au prix spot affiché sur l'UI du pool.")
-    print(f"  → Prix approximatif : 1 HLD ≈ {sp['eth_per_hld'] * 1e9:.4f} gwei")
+    print(f"  - PoolManager : https://basescan.org/address/{POOL_MANAGER}#readContract")
+    print(f"  - Token HLD   : https://basescan.org/token/{TOKEN_HLD}")
+    print(f"  - extsload avec stateSlot = {state['state_slot_hex']}")
+    print(f"  - Le tick ({state['tick']}) doit correspondre au prix spot affiché sur l'UI du pool.")
+    print(f"  - Prix approximatif : 1 HLD ≈ {sp['eth_per_hld'] * 1e9:.4f} gwei")
 
     return state
 

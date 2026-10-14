@@ -1,4 +1,4 @@
-"""plots.py — Visualisations de la micro-structure du pool HLD/ETH (Uniswap V4).
+"""plots.py : Visualisations de la micro-structure du pool HLD/ETH (Uniswap V4).
 
 Les données de pool (sqrtPriceX96, tick, lpFee, liquidité) sont réelles, lues
 via extract_live.py. Les courbes de coût d'exécution sont des sorties de
@@ -78,7 +78,7 @@ def plot_slippage_curve(state):
     ax.set_yscale("log")
     ax.set_xlabel("Taille du trade (millions de HLD)")
     ax.set_ylabel("Coût d'exécution modélisé (bps)")
-    ax.set_title("Coût d'exécution modélisé — Pool HLD/ETH (Uniswap V4, Base)")
+    ax.set_title("Coût d'exécution modélisé, pool HLD/ETH (Uniswap V4, Base)")
     ax.grid(True, alpha=0.3, which="both")
 
     ax.axhline(100, color="orange", linestyle="--", alpha=0.5, label="1 % (lpFee)")
@@ -87,7 +87,7 @@ def plot_slippage_curve(state):
     fig.tight_layout()
     out = OUT_DIR / "slippage_curve.png"
     fig.savefig(out, dpi=150)
-    print(f"✓ Figure → {out}")
+    print(f"Figure enregistrée : {out}")
     plt.close(fig)
 
 
@@ -116,21 +116,21 @@ def plot_depth(state):
     ax1.set_xlabel("Prix (milliards de HLD par ETH)")
     ax1.set_ylabel("ETH virtuels (équivalent USD)", color=color)
     ax1.tick_params(axis="y", labelcolor=color)
-    ax1.set_title("Profil de liquidité — Pool HLD/ETH (Uniswap V4, Base)")
+    ax1.set_title("Profil de liquidité, pool HLD/ETH (Uniswap V4, Base)")
     ax1.legend(loc="upper left")
     ax1.grid(True, alpha=0.3)
 
     fig.tight_layout()
     out = OUT_DIR / "depth_profile.png"
     fig.savefig(out, dpi=150)
-    print(f"✓ Figure → {out}")
+    print(f"Figure enregistrée : {out}")
     plt.close(fig)
 
 
 def plot_summary(state):
     """Génère le dashboard récapitulatif."""
     fig, axes = plt.subplots(2, 2, figsize=(12, 10))
-    fig.suptitle(f"HLD/ETH Pool — Bloc #{state['block']} ({state['timestamp_utc'][:10]})",
+    fig.suptitle(f"HLD/ETH pool, bloc #{state['block']} ({state['timestamp_utc'][:10]})",
                  fontsize=14, fontweight="bold")
 
     L = state["liquidity"]
@@ -194,7 +194,7 @@ def plot_summary(state):
     fig.tight_layout()
     out = OUT_DIR / "summary_dashboard.png"
     fig.savefig(out, dpi=150)
-    print(f"✓ Figure → {out}")
+    print(f"Figure enregistrée : {out}")
     plt.close(fig)
 
 
@@ -202,18 +202,18 @@ def main():
     state = load_pool_state()
     sp = state["spot_price"]
     eth_eur = state.get("eth_eur", 1645.88)
-    print(f"Pool HLD/ETH — Bloc #{state['block']} ({state['timestamp_utc'][:10]})")
+    print(f"Pool HLD/ETH, bloc #{state['block']} ({state['timestamp_utc'][:10]})")
     print(f"Prix spot réel (on-chain) : 1 ETH = {sp['hld_per_eth']:,.0f} HLD")
     print(f"                         : 1 HLD = {sp['eth_per_hld']:.4e} ETH ≈ {sp['eth_per_hld'] * eth_eur * 1e6:.4f} € / M HLD")
     print(f"Liquidité L              : {state['liquidity']:,}")
     print(f"ETH/EUR                  : {eth_eur:.2f} €")
-    print(f"Cohérence tick/px        : {'✓' if state['consistency_check']['consistent'] else '✗'}")
+    print(f"Cohérence tick/px        : {'OK' if state['consistency_check']['consistent'] else 'ECART'}")
     print()
     plot_slippage_curve(state)
     plot_depth(state)
     plot_summary(state)
-    print("\n⚠️  Rappel: les courbes de coût d'exécution sont des SORTIES DE MODÈLE (x*y=k),")
-    print("    PAS des transactions observées. Toujours lire « coût d'exécution modélisé ».")
+    print("\nRappel : les courbes de coût d'exécution sont des sorties de modèle (x*y=k),")
+    print("    pas des transactions observées. Toujours lire « coût d'exécution modélisé ».")
 
 
 if __name__ == "__main__":

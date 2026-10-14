@@ -1,6 +1,6 @@
-"""microstructure.py — Estimateurs de microstructure (volatilité, Kyle lambda, spread effectif).
+"""microstructure.py : Estimateurs de microstructure (volatilité, Kyle lambda, spread effectif).
 
-Convention d'entrée — DataFrame avec colonnes :
+Convention d'entrée : DataFrame avec colonnes :
   block, timestamp, amount0, amount1, sqrtPriceX96, liquidity, tick
 """
 
@@ -260,7 +260,7 @@ def _demo():
 
     df = pd.DataFrame(records)
 
-    print("=== TEST SYNTHETIQUE --- microstructure.py ===\n")
+    print("TEST SYNTHETIQUE : microstructure.py\n")
     print(f"Swaps simules  : {n}")
     print(f"lambda vrai    : {lam_true}\n")
 
@@ -292,7 +292,7 @@ def _demo():
     print(f"  moyen  = {es['mean_bps']:.2f} bps")
     print(f"  n      = {es['n_swaps']}")
 
-    print("\n--- Verifications ---")
+    print("\nVerifications")
     assert 3 < kt["lambda_"] < 7, f"lambda trade-by-trade hors bornes: {kt['lambda_']:.2f}"
     assert 3 < kb60["lambda_"] < 7, f"lambda binned 60s hors bornes: {kb60['lambda_']:.2f}"
     assert 3 < kb300["lambda_"] < 7, f"lambda binned 300s hors bornes: {kb300['lambda_']:.2f}"
