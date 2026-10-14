@@ -4,6 +4,8 @@ Liquidity and price impact of two Uniswap pools: a new, almost empty pool
 (HLD/ETH, Uniswap V4 on Base) and a deep one (ETH/USDC, Uniswap V3 on
 Ethereum). Python, on-chain data from July 2026.
 
+A short note with the method and results: [note/on-chain-market-microstructure.pdf](note/on-chain-market-microstructure.pdf).
+
 Full report (in French): [report/rapport.pdf](report/rapport.pdf)
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue) ![License](https://img.shields.io/badge/license-MIT-green)
