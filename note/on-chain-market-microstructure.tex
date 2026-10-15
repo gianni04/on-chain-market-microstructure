@@ -79,7 +79,7 @@ Metric & HLD/ETH (modelled) & ETH/USDC (estimated) \\
 \midrule
 Trades observed & about 0 & 6,737 in 36 h \\
 Cost of a small order & 1 EUR order: 2,126 bp & 10.2 bp (median effective spread) \\
-Capital to move the price $+1\%$ & about \$0.03 & about \$3.0M \\
+Capital to move the price $+1\%$ & $1.5\times10^{-5}$ ETH (about 0.025 EUR) & 1,618 ETH (about \$3.05M) \\
 Kyle's lambda & not estimable & 0.0116 \$/ETH per ETH \\
 $t$-statistic, $R^2$ of the fit & not applicable & 317, 0.94 \\
 Realised volatility & not identifiable & 24.2\% annualised \\
@@ -105,7 +105,7 @@ Realised volatility & not identifiable & 24.2\% annualised \\
 
 \textbf{Step 4.} The execution price is $6.0758\times10^{-4}/11{,}021{,}764=5.5125\times10^{-11}$ ETH per HLD against a spot of $4.5459\times10^{-11}$. The slippage is $+21.26\%$, or 2,126 bp. The order takes 16.7\% of the HLD reserve, which explains the size of the cost.
 
-\textbf{Moving the price by 1\%.} $x(\sqrt{1.01}-1)/0.99=1.511\times10^{-5}$ ETH, which is \$0.028 at \$1,881.94 per ETH.
+\textbf{Moving the price by 1\%.} $x(\sqrt{1.01}-1)/0.99=1.511\times10^{-5}$ ETH, which is about 0.025 EUR at 1,645.88 EUR per ETH.
 
 \textbf{The same move in ETH/USDC.} With $|\lambda|=3.2834\times10^{-9}$ WETH per USDC per ETH, $\lambda_{\$}=3.2834\times10^{-9}\cdot1881.94^2=0.011629$ \$/ETH per ETH. A 1\% move is \$18.82, which needs $18.82/0.011629=1{,}618$ ETH, or \$3.05M. A trade of 10 ETH moves the price by about \$0.116.
 
@@ -114,7 +114,7 @@ Realised volatility & not identifiable & 24.2\% annualised \\
 \begin{itemize}
 \item \textbf{Local approximation:} constant product is only a local description of V4 concentrated liquidity. Far from the current price the real curve differs.
 \item \textbf{Modelled costs:} the HLD/ETH figures come from a formula and one block of data, not from observed trades. Reserves are virtual, not contract balances.
-\item \textbf{Linear extrapolation:} the \$3.0M figure assumes the impact stays linear for a move far larger than the observed 5-minute moves. It gives an order of magnitude only.
+\item \textbf{Linear extrapolation:} the \$3.05M figure assumes the impact stays linear for a move far larger than the observed 5-minute moves. It gives an order of magnitude only.
 \item \textbf{Short sample:} 36 hours of ETH/USDC data say nothing about other market regimes.
 \item \textbf{Measurement:} the effective spread uses the price before the swap as mid, so it mixes the pool fee, the price impact of the swap itself and any price change between swaps.
 \end{itemize}

@@ -28,10 +28,10 @@ trades, so its price impact is **estimated** from real swaps.
 
 | | HLD/ETH (modelled) | ETH/USDC (estimated) |
 |---|---|---|
-| Liquidity | about $10 | several $M |
+| Liquidity | about 10 EUR (0.006 ETH) | not measured |
 | Trades observed | about 0 | 6,737 in 36 h |
-| Cost of a small order | 1 EUR order: about 2,100 bp | about 10 bp (median effective spread) |
-| Capital to move the price +1% | about $0.03 | about $3.0M |
+| Cost of a small order | 1 EUR order: 2,126 bp | 10.2 bp (median effective spread) |
+| Capital to move the price +1% | 1.5e-5 ETH (about 0.025 EUR) | 1,618 ETH (about $3.05M) |
 | Kyle's lambda | not estimable | 0.0116 $ per ETH per ETH (t = 317, R² = 0.94) |
 | Realised volatility | not identifiable | 24.2% annualised |
 
