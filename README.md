@@ -2,7 +2,7 @@
 
 Liquidity and price impact of two Uniswap pools: a new, almost empty pool
 (HLD/ETH, Uniswap V4 on Base) and a deep one (ETH/USDC, Uniswap V3 on
-Ethereum). Python, on-chain data from July 2026.
+Ethereum; Adams et al., 2021). Python, on-chain data from July 2026.
 
 A short note with the method and results: [note/on-chain-market-microstructure.pdf](note/on-chain-market-microstructure.pdf).
 
@@ -21,7 +21,7 @@ trades, so its price impact is **estimated** from real swaps.
   contract with `extsload` (pool id by keccak256, storage slot, decoding of
   the packed `Slot0`), at Base block 49,023,454.
 - **ETH/USDC:** 6,737 real `Swap` events over 36 hours (22-23 July 2026).
-  Kyle's lambda by OLS of price changes on signed order flow, realised
+  Kyle's lambda (Kyle, 1985) by OLS of price changes on signed order flow, realised
   volatility, effective spread.
 
 ## Results
@@ -76,3 +76,9 @@ src/plots.py               figures
 notebooks/analysis.ipynb   full analysis
 report/rapport.pdf         report
 ```
+
+## References
+
+Adams, H., Zinsmeister, N., Salem, M., Keefer, R. and Robinson, D. (2021). Uniswap v3 Core. Uniswap Labs whitepaper, March 2021. https://uniswap.org/whitepaper-v3.pdf
+
+Kyle, A. S. (1985). Continuous auctions and insider trading. Econometrica, 53(6), 1315-1335. https://doi.org/10.2307/1913210
