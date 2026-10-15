@@ -49,7 +49,6 @@ POOL_ADDRESS = to_checksum_address("0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640")
 SWAP_TOPIC = "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67"
 
 RPC_URLS = [
-    "https://eth.llamarpc.com",
     "https://rpc.ankr.com/eth",
     "https://ethereum.publicnode.com",
     "https://1rpc.io/eth",

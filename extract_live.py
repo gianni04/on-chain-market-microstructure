@@ -36,7 +36,6 @@ POOL_STATE_FILE = DATA_DIR / "pool_state.json"
 
 RPC_URLS = [
     "https://mainnet.base.org",
-    "https://base.llamarpc.com",
     "https://base-pokt.nodies.app",
     "https://1rpc.io/base",
 ]
